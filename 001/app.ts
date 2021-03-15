@@ -35,7 +35,7 @@ class Numbers {
             this.numbersContainer.innerHTML = '';
         }
 
-        for (let i = 1; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             const input:HTMLInputElement = <HTMLInputElement>document.createElement('input');
             input.type = 'number';
 
@@ -53,7 +53,7 @@ class Numbers {
             this.inputs.push(<HTMLInputElement>input);
         });
     }
-
+k
     private listenInputs(): void {
         for (const input of this.inputs) {
             input.addEventListener('input', () => this.compute());
@@ -63,7 +63,13 @@ class Numbers {
     private getValues(): number[] {
         const values: number[] = [];
 
+        const regexpNumber = new RegExp('^\\d+$');
+
         for (const input of this.inputs) {
+            if (input.value.length > 0 && !regexpNumber.test(input.value)) {
+                throw new TypeError();
+            }
+
             values.push(+input.value);
         }
 
@@ -71,7 +77,14 @@ class Numbers {
     }
 
     private compute(): void {
-        const values: number[] = this.getValues();
+        let values: number[];
+
+        try {
+            values = this.getValues();
+        } catch (e) {
+            this.show(null, null, null, null);
+            return;
+        }
 
         const sum = values.reduce((a, b) => a + b);
         const avg = sum / 4;
@@ -81,11 +94,11 @@ class Numbers {
         this.show(sum, avg, min, max);
     }
 
-    private show(sum: number, avg: number, min: number, max: number): void {
-        this.sum.value = sum.toString();
-        this.avg.value = avg.toString();
-        this.min.value = min.toString();
-        this.max.value = max.toString();
+    private show(sum: number | null, avg: number | null, min: number | null, max: number | null): void {
+        this.sum.value = sum != null ? sum.toString() : 'Waiting for data...';
+        this.avg.value = avg != null ? avg.toString() : 'Waiting for data...';
+        this.min.value = min != null ? min.toString() : 'Waiting for data...';
+        this.max.value = max != null ? max.toString() : 'Waiting for data...';
     }
 }
 
