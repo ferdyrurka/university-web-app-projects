@@ -53,7 +53,7 @@ class Numbers {
             this.inputs.push(<HTMLInputElement>input);
         });
     }
-k
+
     private listenInputs(): void {
         for (const input of this.inputs) {
             input.addEventListener('input', () => this.compute());
