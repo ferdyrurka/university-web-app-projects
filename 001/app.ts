@@ -5,17 +5,15 @@ class Numbers {
     private avg: HTMLInputElement;
     private min: HTMLInputElement;
     private max: HTMLInputElement;
+    private inputNumbersCount: HTMLInputElement;
+    private createInputBtn: HTMLButtonElement;
+    private numbersContainer: HTMLDivElement;
 
-    constructor() {
-        this.setInputs();
-        this.listenInputs();
-    }
+    public setBasicFields(): void {
+        this.numbersContainer = <HTMLDivElement>document.getElementById('numbers');
 
-    private setInputs(): void {
-        this.inputs.push(document.querySelector('#numbers #input-1'));
-        this.inputs.push(document.querySelector('#numbers #input-2'));
-        this.inputs.push(document.querySelector('#numbers #input-3'));
-        this.inputs.push(document.querySelector('#numbers #input-4'));
+        this.inputNumbersCount = <HTMLInputElement>document.getElementById('numbers-count');
+        this.createInputBtn = <HTMLButtonElement>document.getElementById('input-create-btn');
 
         this.sum = document.querySelector('#result #sum');
         this.avg = document.querySelector('#result #avg');
@@ -23,9 +21,42 @@ class Numbers {
         this.max = document.querySelector('#result #max');
     }
 
+    public listenBasicFields(): void {
+        this.createInputBtn.addEventListener('click', () => {
+            this.createInputs(
+                +this.inputNumbersCount.value
+            )
+        })
+    }
+
+    private createInputs(count: number): void
+    {
+        if (this.numbersContainer.outerHTML.length > 0) {
+            this.numbersContainer.innerHTML = '';
+        }
+
+        for (let i = 1; i < count; i++) {
+            const input:HTMLInputElement = <HTMLInputElement>document.createElement('input');
+            input.type = 'number';
+
+            this.numbersContainer.append(input);
+        }
+
+        this.setInputs();
+        this.listenInputs();
+    }
+
+    private setInputs(): void {
+        this.inputs = [];
+
+        document.querySelectorAll('#numbers input').forEach(input => {
+            this.inputs.push(<HTMLInputElement>input);
+        });
+    }
+
     private listenInputs(): void {
         for (const input of this.inputs) {
-            input.addEventListener('input', () => this.compute())
+            input.addEventListener('input', () => this.compute());
         }
     }
 
@@ -63,6 +94,8 @@ class App {
 
     run(): void {
         this.numbers = new Numbers();
+        this.numbers.setBasicFields();
+        this.numbers.listenBasicFields();
     }
 }
 

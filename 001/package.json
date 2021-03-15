@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "build": "webpack",
+    "buildWatch": "webpack --watch",
     "with_tsc": "tsc app.ts"
   },
   "keywords": [],
