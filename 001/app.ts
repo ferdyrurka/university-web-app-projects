@@ -8,12 +8,14 @@ class Numbers {
     private inputNumbersCount: HTMLInputElement;
     private createInputBtn: HTMLButtonElement;
     private numbersContainer: HTMLDivElement;
+    private deleteBtn: HTMLButtonElement;
 
     public setBasicFields(): void {
         this.numbersContainer = <HTMLDivElement>document.getElementById('numbers');
 
         this.inputNumbersCount = <HTMLInputElement>document.getElementById('numbers-count');
         this.createInputBtn = <HTMLButtonElement>document.getElementById('input-create-btn');
+        this.deleteBtn = <HTMLButtonElement>document.getElementById('inputs-delete-btn');
 
         this.sum = document.querySelector('#result #sum');
         this.avg = document.querySelector('#result #avg');
@@ -27,6 +29,8 @@ class Numbers {
                 +this.inputNumbersCount.value
             )
         })
+
+        this.deleteBtn.addEventListener('click', () => this.deleteInputs())
     }
 
     private createInputs(count: number): void
@@ -40,6 +44,11 @@ class Numbers {
             input.type = 'number';
 
             this.numbersContainer.append(input);
+
+            const inputCheckbox:HTMLInputElement = <HTMLInputElement>document.createElement('input');
+            inputCheckbox.type = 'checkbox';
+
+            this.numbersContainer.append(inputCheckbox);
         }
 
         this.setInputs();
@@ -56,8 +65,26 @@ class Numbers {
 
     private listenInputs(): void {
         for (const input of this.inputs) {
+            if (input.type != 'number') {
+                continue;
+            }
+
             input.addEventListener('input', () => this.compute());
         }
+    }
+
+    private deleteInputs() {
+        for (const input of this.inputs) {
+            if (input.type != 'checkbox' || !input.checked) {
+                continue;
+            }
+
+            input.previousElementSibling.remove();
+            input.remove();
+        }
+
+        this.setInputs();
+        this.compute();
     }
 
     private getValues(): number[] {
@@ -66,8 +93,16 @@ class Numbers {
         const regexpNumber = new RegExp('^\\d+$');
 
         for (const input of this.inputs) {
+            if (input.type != 'number') {
+                continue;
+            }
+
             if (input.value.length > 0 && !regexpNumber.test(input.value)) {
                 throw new TypeError();
+            }
+
+            if (!regexpNumber.test(input.value)) {
+                continue;
             }
 
             values.push(+input.value);
